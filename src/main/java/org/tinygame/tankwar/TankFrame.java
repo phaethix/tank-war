@@ -33,14 +33,12 @@ public class TankFrame extends Frame {
         public void keyPressed(KeyEvent e) {
             x += 20;
             y += 20;
-            repaint();
         }
 
         @Override
         public void keyReleased(KeyEvent e) {
             x -= 10;
             y -= 10;
-            repaint();
         }
     }
 
