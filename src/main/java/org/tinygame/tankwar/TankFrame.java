@@ -5,6 +5,8 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 坦克大战游戏主窗口类
@@ -12,8 +14,8 @@ import java.awt.event.WindowEvent;
 public class TankFrame extends Frame {
     public static final int GAME_WIDTH = 800, GAME_HEIGHT = 600;
 
-    Tank tank = new Tank(200, 200, Dir.DOWN,this);
-    Bullet bullet = new Bullet(300, 300, Dir.DOWN);
+    Tank tank = new Tank(200, 200, Dir.DOWN, this);
+    List<Bullet> bullets = new ArrayList<>();
 
     public TankFrame() {
         this.setTitle("Tank War");
@@ -74,13 +76,14 @@ public class TankFrame extends Frame {
     @Override
     public void paint(Graphics g) {
         tank.paint(g);
-        bullet.paint(g);
+        bullets.forEach(bullet -> bullet.paint(g));
     }
 
     Image offScreenImage = null;
+
     @Override
     public void update(Graphics g) {
-        if(offScreenImage == null) {
+        if (offScreenImage == null) {
             offScreenImage = this.createImage(GAME_WIDTH, GAME_HEIGHT);
         }
         Graphics gOffScreen = offScreenImage.getGraphics();
