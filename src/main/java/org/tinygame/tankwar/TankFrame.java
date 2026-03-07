@@ -75,6 +75,11 @@ public class TankFrame extends Frame {
 
     @Override
     public void paint(Graphics g) {
+        Color color = g.getColor();
+        g.setColor(Color.WHITE);
+        g.drawString("Bullets: " + bullets.size(), 10, 60);
+        g.setColor(color);
+
         tank.paint(g);
         bullets.forEach(bullet -> bullet.paint(g));
     }
