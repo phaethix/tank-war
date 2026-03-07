@@ -10,7 +10,7 @@ import java.awt.event.WindowEvent;
  * 坦克大战游戏主窗口类
  */
 public class TankFrame extends Frame {
-    Tank tank = new Tank(200, 200, Dir.DOWN);
+    Tank tank = new Tank(200, 200, Dir.DOWN,this);
     Bullet bullet = new Bullet(300, 300, Dir.DOWN);
 
     public TankFrame() {
@@ -39,6 +39,7 @@ public class TankFrame extends Frame {
                 case KeyEvent.VK_UP -> bU = true;
                 case KeyEvent.VK_RIGHT -> bR = true;
                 case KeyEvent.VK_DOWN -> bD = true;
+                case KeyEvent.VK_CONTROL -> tank.fire();
                 default -> {
                 }
             }
