@@ -22,15 +22,18 @@ public class Bullet {
     }
 
     public void paint(Graphics g) {
-        if (inactive) {
-            frame.bullets.remove(this);
-        }
+        if (inactive) return;
+
         Color c = g.getColor();
         g.setColor(Color.RED);
         g.fillOval(x, y, WIDTH, HEIGHT);
         g.setColor(c);
 
         move();
+    }
+
+    public boolean isInactive() {
+        return inactive;
     }
 
     private void move() {

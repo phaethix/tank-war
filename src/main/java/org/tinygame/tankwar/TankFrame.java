@@ -96,6 +96,10 @@ public class TankFrame extends Frame {
         gOffScreen.setColor(Color.BLACK);
         gOffScreen.fillRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
         gOffScreen.setColor(c);
+
+        // 移除不活跃的子弹
+        bullets.removeIf(Bullet::isInactive);
+
         paint(gOffScreen);
         g.drawImage(offScreenImage, 0, 0, null);
     }
