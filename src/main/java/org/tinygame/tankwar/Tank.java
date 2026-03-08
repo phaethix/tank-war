@@ -7,6 +7,8 @@ import java.awt.*;
  */
 public class Tank {
     private static final int SPEED = 10;
+    public static final int WIDTH = ResourceManager.tankD.getWidth();
+    public static final int HEIGHT = ResourceManager.tankD.getHeight();
 
     private int x, y;
     private Dir dir;
@@ -64,6 +66,8 @@ public class Tank {
     }
 
     public void fire() {
-        frame.bullets.add(new Bullet(x, y, dir));
+        int bx = this.x + Tank.WIDTH / 2 - Bullet.WIDTH / 2;
+        int by = this.y + Tank.HEIGHT / 2 - Bullet.HEIGHT / 2;
+        frame.bullets.add(new Bullet(bx, by, dir));
     }
 }
