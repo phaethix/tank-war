@@ -22,10 +22,14 @@ public class Bullet {
     public void paint(Graphics g) {
         if (inactive) return;
 
-        Color c = g.getColor();
-        g.setColor(Color.RED);
-        g.fillOval(x, y, WIDTH, HEIGHT);
-        g.setColor(c);
+        switch (dir) {
+            case LEFT -> g.drawImage(ResourceManager.bulletL, x, y, null);
+            case UP -> g.drawImage(ResourceManager.bulletU, x, y, null);
+            case RIGHT -> g.drawImage(ResourceManager.bulletR, x, y, null);
+            case DOWN -> g.drawImage(ResourceManager.bulletD, x, y, null);
+            default -> {
+            }
+        }
 
         move();
     }
