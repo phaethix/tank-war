@@ -14,6 +14,7 @@ public class Tank {
     private Dir dir;
     private boolean moving;
     private final TankFrame frame;
+    private boolean inactive;
 
     public Tank(int x, int y, Dir dir, TankFrame frame) {
         super();
@@ -36,6 +37,13 @@ public class Tank {
         return moving;
     }
 
+    public int getX() {
+        return x;
+    }
+
+    public int getY() {
+        return y;
+    }
     public void setMoving(boolean moving) {
         this.moving = moving;
     }
@@ -50,6 +58,10 @@ public class Tank {
             }
         }
         move();
+    }
+
+    public boolean isInactive() {
+        return inactive;
     }
 
     private void move() {
@@ -69,5 +81,9 @@ public class Tank {
         int bx = this.x + Tank.WIDTH / 2 - Bullet.WIDTH / 2;
         int by = this.y + Tank.HEIGHT / 2 - Bullet.HEIGHT / 2;
         frame.bullets.add(new Bullet(bx, by, dir));
+    }
+
+    public void destroy() {
+        this.inactive = true;
     }
 }

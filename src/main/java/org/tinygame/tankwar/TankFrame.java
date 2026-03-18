@@ -79,11 +79,13 @@ public class TankFrame extends Frame {
         Color color = g.getColor();
         g.setColor(Color.WHITE);
         g.drawString("Bullets: " + bullets.size(), 10, 60);
+        g.drawString("Enemies: " + tanks.size(), 10, 80);
         g.setColor(color);
 
         tank.paint(g);
         tanks.forEach(tank -> tank.paint(g));
         bullets.forEach(bullet -> bullet.paint(g));
+        bullets.forEach(bullet -> tanks.forEach(bullet::collideWith));
     }
 
     Image offScreenImage = null;
@@ -101,6 +103,8 @@ public class TankFrame extends Frame {
 
         // 移除不活跃的子弹
         bullets.removeIf(Bullet::isInactive);
+        // 移除不活跃的坦克
+        tanks.removeIf(Tank::isInactive);
 
         paint(gOffScreen);
         g.drawImage(offScreenImage, 0, 0, null);

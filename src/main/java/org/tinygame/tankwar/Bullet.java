@@ -53,4 +53,17 @@ public class Bullet {
             inactive = true;
         }
     }
+
+    public void collideWith(Tank tank) {
+        Rectangle r1 = new Rectangle(this.x, this.y, WIDTH, HEIGHT);
+        Rectangle r2 = new Rectangle(tank.getX(), tank.getY(), Tank.WIDTH, Tank.HEIGHT);
+        if (r1.intersects(r2)) {
+            tank.destroy();
+            this.destroy();
+        }
+    }
+
+    private void destroy() {
+        this.inactive = true;
+    }
 }
