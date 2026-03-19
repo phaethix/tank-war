@@ -13,11 +13,13 @@ public class Bullet {
     private int x, y;
     private final Dir dir;
     private boolean inactive;
+    private final Group group;
 
-    public Bullet(int x, int y, Dir dir) {
+    public Bullet(int x, int y, Dir dir, Group group) {
         this.x = x;
         this.y = y;
         this.dir = dir;
+        this.group = group;
     }
 
     public void paint(Graphics g) {
@@ -55,6 +57,11 @@ public class Bullet {
     }
 
     public void collideWith(Tank tank) {
+        // 忽略无效物体（非活跃子弹或坦克）及友军之间的碰撞
+        if (this.inactive || tank.isInactive() || this.group == tank.getGroup()) {
+            return;
+        }
+
         Rectangle r1 = new Rectangle(this.x, this.y, WIDTH, HEIGHT);
         Rectangle r2 = new Rectangle(tank.getX(), tank.getY(), Tank.WIDTH, Tank.HEIGHT);
         if (r1.intersects(r2)) {

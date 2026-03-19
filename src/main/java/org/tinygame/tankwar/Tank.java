@@ -1,12 +1,15 @@
 package org.tinygame.tankwar;
 
 import java.awt.*;
+import java.util.Random;
 
 /**
  * 坦克类
  */
 public class Tank {
-    private static final int SPEED = 10;
+    private static final int SPEED = 3;
+    private static final int BORDER_MARGIN = 2;
+    private static final int TOP_BOUNDARY_OFFSET = 28;
     public static final int WIDTH = ResourceManager.tankD.getWidth();
     public static final int HEIGHT = ResourceManager.tankD.getHeight();
 
@@ -15,26 +18,29 @@ public class Tank {
     private boolean moving;
     private final TankFrame frame;
     private boolean inactive;
+    private Group group;
 
-    public Tank(int x, int y, Dir dir, TankFrame frame) {
+    private final Random random = new Random();
+
+    public Tank(int x, int y, Dir dir, Group group, TankFrame frame) {
         super();
         this.x = x;
         this.y = y;
         this.dir = dir;
+        this.group = group;
         this.frame = frame;
     }
-
 
     public void setDir(Dir dir) {
         this.dir = dir;
     }
 
-    public Dir getDir() {
-        return dir;
-    }
-
     public boolean isMoving() {
         return moving;
+    }
+
+    public void Moving() {
+        this.moving = true;
     }
 
     public int getX() {
@@ -44,8 +50,13 @@ public class Tank {
     public int getY() {
         return y;
     }
+
     public void setMoving(boolean moving) {
         this.moving = moving;
+    }
+
+    public Group getGroup() {
+        return group;
     }
 
     public void paint(Graphics g) {
@@ -75,12 +86,30 @@ public class Tank {
             default -> {
             }
         }
+
+        boundsCheck();
+
+        if (group == Group.BAD && random.nextInt(100) > 80) {
+            this.fire();
+        }
+
+        if (group == Group.BAD && random.nextInt(100) > 95) {
+            this.dir = Dir.values()[random.nextInt(Dir.values().length)];
+        }
+    }
+
+    private void boundsCheck() {
+        int X = TankFrame.GAME_WIDTH - WIDTH - BORDER_MARGIN;
+        int Y = TankFrame.GAME_HEIGHT - HEIGHT - BORDER_MARGIN;
+
+        x = Math.max(BORDER_MARGIN, Math.min(x, X));
+        y = Math.max(TOP_BOUNDARY_OFFSET, Math.min(y, Y));
     }
 
     public void fire() {
         int bx = this.x + Tank.WIDTH / 2 - Bullet.WIDTH / 2;
         int by = this.y + Tank.HEIGHT / 2 - Bullet.HEIGHT / 2;
-        frame.bullets.add(new Bullet(bx, by, dir));
+        frame.bullets.add(new Bullet(bx, by, dir, group));
     }
 
     public void destroy() {
