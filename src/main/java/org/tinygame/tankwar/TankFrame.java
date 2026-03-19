@@ -14,7 +14,7 @@ import java.util.List;
 public class TankFrame extends Frame {
     public static final int GAME_WIDTH = 800, GAME_HEIGHT = 600;
 
-    Tank tank = new Tank(210, 400, Dir.UP, this);
+    Tank tank = new Tank(210, 400, Dir.UP, Group.GOOD, this);
     List<Tank> tanks = new ArrayList<>();
     List<Bullet> bullets = new ArrayList<>();
 
@@ -83,7 +83,10 @@ public class TankFrame extends Frame {
         g.setColor(color);
 
         tank.paint(g);
-        tanks.forEach(tank -> tank.paint(g));
+        tanks.forEach(tank -> {
+            tank.Moving();
+            tank.paint(g);
+        });
         bullets.forEach(bullet -> bullet.paint(g));
         bullets.forEach(bullet -> tanks.forEach(bullet::collideWith));
     }
