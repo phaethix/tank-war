@@ -14,12 +14,14 @@ public class Bullet {
     private final Dir dir;
     private boolean inactive;
     private final Group group;
+    private final TankFrame frame;
 
-    public Bullet(int x, int y, Dir dir, Group group) {
+    public Bullet(int x, int y, Dir dir, Group group, TankFrame frame) {
         this.x = x;
         this.y = y;
         this.dir = dir;
         this.group = group;
+        this.frame = frame;
     }
 
     public void paint(Graphics g) {
@@ -65,6 +67,10 @@ public class Bullet {
         Rectangle r1 = new Rectangle(this.x, this.y, WIDTH, HEIGHT);
         Rectangle r2 = new Rectangle(tank.getX(), tank.getY(), Tank.WIDTH, Tank.HEIGHT);
         if (r1.intersects(r2)) {
+            // 在坦克中心位置产生爆炸效果
+            int ex = tank.getX() + Tank.WIDTH / 2 - Explode.WIDTH / 2;
+            int ey = tank.getY() + Tank.HEIGHT / 2 - Explode.HEIGHT / 2;
+            frame.explodes.add(new Explode(ex, ey));
             tank.destroy();
             this.destroy();
         }
