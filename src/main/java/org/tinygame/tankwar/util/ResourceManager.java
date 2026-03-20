@@ -1,4 +1,4 @@
-package org.tinygame.tankwar;
+package org.tinygame.tankwar.util;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -41,7 +41,6 @@ public class ResourceManager {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-
     }
 
     public static BufferedImage rotateImage(final BufferedImage bufferedimage, final int degree) {

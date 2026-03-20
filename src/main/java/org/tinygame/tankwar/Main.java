@@ -1,5 +1,9 @@
 package org.tinygame.tankwar;
 
+import org.tinygame.tankwar.entity.Tank;
+import org.tinygame.tankwar.enums.Dir;
+import org.tinygame.tankwar.enums.Group;
+
 import java.util.concurrent.TimeUnit;
 
 public class Main {

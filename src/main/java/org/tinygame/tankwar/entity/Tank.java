@@ -1,4 +1,9 @@
-package org.tinygame.tankwar;
+package org.tinygame.tankwar.entity;
+
+import org.tinygame.tankwar.TankFrame;
+import org.tinygame.tankwar.enums.Dir;
+import org.tinygame.tankwar.enums.Group;
+import org.tinygame.tankwar.util.ResourceManager;
 
 import java.awt.*;
 import java.util.Random;
