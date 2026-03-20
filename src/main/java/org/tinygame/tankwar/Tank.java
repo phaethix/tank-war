@@ -109,7 +109,7 @@ public class Tank {
     public void fire() {
         int bx = this.x + Tank.WIDTH / 2 - Bullet.WIDTH / 2;
         int by = this.y + Tank.HEIGHT / 2 - Bullet.HEIGHT / 2;
-        frame.bullets.add(new Bullet(bx, by, dir, group));
+        frame.bullets.add(new Bullet(bx, by, dir, group, frame));
     }
 
     public void destroy() {

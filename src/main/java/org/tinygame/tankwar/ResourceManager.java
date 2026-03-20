@@ -12,6 +12,7 @@ import java.util.Objects;
 public class ResourceManager {
     public static BufferedImage tankL, tankU, tankR, tankD;
     public static BufferedImage bulletL, bulletU, bulletR, bulletD;
+    public static BufferedImage[] explodes = new BufferedImage[16];
 
     static {
         try {
@@ -30,6 +31,13 @@ public class ResourceManager {
             bulletL = rotateImage(bulletU, -90);
             bulletR = rotateImage(bulletU, 90);
             bulletD = rotateImage(bulletU, 180);
+
+            // 爆炸序列帧
+            for (int i = 0; i < 16; i++) {
+                explodes[i] = ImageIO.read(Objects.requireNonNull(
+                        ResourceManager.class.getClassLoader().getResourceAsStream("images/e" + (i + 1) + ".gif"))
+                );
+            }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

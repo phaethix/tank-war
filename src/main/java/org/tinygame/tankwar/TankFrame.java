@@ -17,6 +17,7 @@ public class TankFrame extends Frame {
     Tank tank = new Tank(210, 400, Dir.UP, Group.GOOD, this);
     List<Tank> tanks = new ArrayList<>();
     List<Bullet> bullets = new ArrayList<>();
+    List<Explode> explodes = new ArrayList<>();
 
     public TankFrame() {
         this.setTitle("Tank War");
@@ -89,6 +90,7 @@ public class TankFrame extends Frame {
         });
         bullets.forEach(bullet -> bullet.paint(g));
         bullets.forEach(bullet -> tanks.forEach(bullet::collideWith));
+        explodes.forEach(explode -> explode.paint(g));
     }
 
     Image offScreenImage = null;
@@ -108,6 +110,8 @@ public class TankFrame extends Frame {
         bullets.removeIf(Bullet::isInactive);
         // 移除不活跃的坦克
         tanks.removeIf(Tank::isInactive);
+        // 移除已播放完毕的爆炸
+        explodes.removeIf(e -> !e.isLiving());
 
         paint(gOffScreen);
         g.drawImage(offScreenImage, 0, 0, null);
