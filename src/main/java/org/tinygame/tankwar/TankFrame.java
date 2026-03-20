@@ -1,5 +1,11 @@
 package org.tinygame.tankwar;
 
+import org.tinygame.tankwar.entity.Bullet;
+import org.tinygame.tankwar.entity.Explode;
+import org.tinygame.tankwar.entity.Tank;
+import org.tinygame.tankwar.enums.Dir;
+import org.tinygame.tankwar.enums.Group;
+
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -15,9 +21,9 @@ public class TankFrame extends Frame {
     public static final int GAME_WIDTH = 800, GAME_HEIGHT = 600;
 
     Tank tank = new Tank(210, 400, Dir.UP, Group.GOOD, this);
-    List<Tank> tanks = new ArrayList<>();
-    List<Bullet> bullets = new ArrayList<>();
-    List<Explode> explodes = new ArrayList<>();
+    public List<Tank> tanks = new ArrayList<>();
+    public List<Bullet> bullets = new ArrayList<>();
+    public List<Explode> explodes = new ArrayList<>();
 
     public TankFrame() {
         this.setTitle("Tank War");

@@ -1,4 +1,6 @@
-package org.tinygame.tankwar;
+package org.tinygame.tankwar.entity;
+
+import org.tinygame.tankwar.util.ResourceManager;
 
 import java.awt.*;
 
