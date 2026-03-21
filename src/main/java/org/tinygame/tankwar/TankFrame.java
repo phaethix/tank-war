@@ -5,6 +5,7 @@ import org.tinygame.tankwar.entity.Explode;
 import org.tinygame.tankwar.entity.Tank;
 import org.tinygame.tankwar.enums.Dir;
 import org.tinygame.tankwar.enums.Group;
+import org.tinygame.tankwar.util.Audio;
 
 import java.awt.*;
 import java.awt.event.KeyAdapter;
@@ -34,6 +35,8 @@ public class TankFrame extends Frame {
         this.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
+                // 窗口关闭时停止背景音乐，释放音频资源
+                Audio.stopBgm();
                 System.exit(0);
             }
         });
@@ -47,13 +50,12 @@ public class TankFrame extends Frame {
         @Override
         public void keyPressed(KeyEvent e) {
             switch (e.getKeyCode()) {
-                case KeyEvent.VK_LEFT -> bL = true;
-                case KeyEvent.VK_UP -> bU = true;
-                case KeyEvent.VK_RIGHT -> bR = true;
-                case KeyEvent.VK_DOWN -> bD = true;
-                case KeyEvent.VK_CONTROL -> tank.fire();
-                default -> {
-                }
+                case KeyEvent.VK_LEFT   -> bL = true;
+                case KeyEvent.VK_UP     -> bU = true;
+                case KeyEvent.VK_RIGHT  -> bR = true;
+                case KeyEvent.VK_DOWN   -> bD = true;
+                case KeyEvent.VK_SPACE  -> tank.fire();
+                case KeyEvent.VK_Q      -> Audio.toggleBgm();
             }
             updateTankDir();
         }
@@ -61,20 +63,18 @@ public class TankFrame extends Frame {
         @Override
         public void keyReleased(KeyEvent e) {
             switch (e.getKeyCode()) {
-                case KeyEvent.VK_LEFT -> bL = false;
-                case KeyEvent.VK_UP -> bU = false;
-                case KeyEvent.VK_RIGHT -> bR = false;
-                case KeyEvent.VK_DOWN -> bD = false;
-                default -> {
-                }
+                case KeyEvent.VK_LEFT   -> bL = false;
+                case KeyEvent.VK_UP     -> bU = false;
+                case KeyEvent.VK_RIGHT  -> bR = false;
+                case KeyEvent.VK_DOWN   -> bD = false;
             }
             updateTankDir();
         }
 
         private void updateTankDir() {
-            tank.setMoving((bL || bU || bR || bD));
+            tank.setMoving(bL || bU || bR || bD);
 
-            if (bL) tank.setDir(Dir.LEFT);
+            if (bL)      tank.setDir(Dir.LEFT);
             else if (bU) tank.setDir(Dir.UP);
             else if (bR) tank.setDir(Dir.RIGHT);
             else if (bD) tank.setDir(Dir.DOWN);
@@ -90,9 +90,9 @@ public class TankFrame extends Frame {
         g.setColor(color);
 
         tank.paint(g);
-        tanks.forEach(tank -> {
-            tank.Moving();
-            tank.paint(g);
+        tanks.forEach(t -> {
+            t.setMoving(true);
+            t.paint(g);
         });
         bullets.forEach(bullet -> bullet.paint(g));
         bullets.forEach(bullet -> tanks.forEach(bullet::collideWith));
@@ -117,7 +117,7 @@ public class TankFrame extends Frame {
         // 移除不活跃的坦克
         tanks.removeIf(Tank::isInactive);
         // 移除已播放完毕的爆炸
-        explodes.removeIf(e -> !e.isLiving());
+        explodes.removeIf(Explode::isInactive);
 
         paint(gOffScreen);
         g.drawImage(offScreenImage, 0, 0, null);
