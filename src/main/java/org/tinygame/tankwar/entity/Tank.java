@@ -1,8 +1,11 @@
 package org.tinygame.tankwar.entity;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.tinygame.tankwar.TankFrame;
 import org.tinygame.tankwar.enums.Dir;
 import org.tinygame.tankwar.enums.Group;
+import org.tinygame.tankwar.util.Audio;
 import org.tinygame.tankwar.util.ResourceManager;
 
 import java.awt.*;
@@ -11,24 +14,25 @@ import java.util.Random;
 /**
  * 坦克类
  */
+@Getter
 public class Tank {
     private static final int SPEED = 3;
     private static final int BORDER_MARGIN = 2;
     private static final int TOP_BOUNDARY_OFFSET = 28;
+
     public static final int WIDTH = ResourceManager.tankD.getWidth();
     public static final int HEIGHT = ResourceManager.tankD.getHeight();
 
-    private int x, y;
-    private Dir dir;
-    private boolean moving;
     private final TankFrame frame;
-    private boolean inactive;
-    private Group group;
-
+    private final Group group;
     private final Random random = new Random();
 
+    private int x, y;
+    @Setter private Dir dir;
+    @Setter private boolean moving;
+    private boolean inactive;
+
     public Tank(int x, int y, Dir dir, Group group, TankFrame frame) {
-        super();
         this.x = x;
         this.y = y;
         this.dir = dir;
@@ -36,52 +40,24 @@ public class Tank {
         this.frame = frame;
     }
 
-    public void setDir(Dir dir) {
-        this.dir = dir;
-    }
-
-    public boolean isMoving() {
-        return moving;
-    }
-
-    public void Moving() {
-        this.moving = true;
-    }
-
-    public int getX() {
-        return x;
-    }
-
-    public int getY() {
-        return y;
-    }
-
-    public void setMoving(boolean moving) {
-        this.moving = moving;
-    }
-
-    public Group getGroup() {
-        return group;
-    }
-
     public void paint(Graphics g) {
-        switch (dir) {
-            case LEFT -> g.drawImage(ResourceManager.tankL, x, y, null);
-            case UP -> g.drawImage(ResourceManager.tankU, x, y, null);
-            case RIGHT -> g.drawImage(ResourceManager.tankR, x, y, null);
-            case DOWN -> g.drawImage(ResourceManager.tankD, x, y, null);
-            default -> {
-            }
-        }
+        var isGood = group == Group.GOOD;
+        var image = switch (dir) {
+            case LEFT  -> isGood ? ResourceManager.tankL : ResourceManager.badTankL;
+            case UP    -> isGood ? ResourceManager.tankU : ResourceManager.badTankU;
+            case RIGHT -> isGood ? ResourceManager.tankR : ResourceManager.badTankR;
+            case DOWN  -> isGood ? ResourceManager.tankD : ResourceManager.badTankD;
+        };
+        g.drawImage(image, x, y, null);
         move();
-    }
-
-    public boolean isInactive() {
-        return inactive;
     }
 
     private void move() {
         if (!moving) return;
+
+        if (group == Group.GOOD) {
+            Audio.play(Audio.TANK_MOVE);
+        }
 
         switch (dir) {
             case LEFT -> x -= SPEED;
@@ -107,14 +83,17 @@ public class Tank {
         int X = TankFrame.GAME_WIDTH - WIDTH - BORDER_MARGIN;
         int Y = TankFrame.GAME_HEIGHT - HEIGHT - BORDER_MARGIN;
 
-        x = Math.max(BORDER_MARGIN, Math.min(x, X));
-        y = Math.max(TOP_BOUNDARY_OFFSET, Math.min(y, Y));
+        x = Math.clamp(x, BORDER_MARGIN, X);
+        y = Math.clamp(y, TOP_BOUNDARY_OFFSET, Y);
     }
 
     public void fire() {
         int bx = this.x + Tank.WIDTH / 2 - Bullet.WIDTH / 2;
         int by = this.y + Tank.HEIGHT / 2 - Bullet.HEIGHT / 2;
         frame.bullets.add(new Bullet(bx, by, dir, group, frame));
+        if (group == Group.GOOD) {
+            Audio.play(Audio.TANK_FIRE);
+        }
     }
 
     public void destroy() {

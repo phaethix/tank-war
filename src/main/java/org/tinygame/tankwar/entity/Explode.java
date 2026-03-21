@@ -1,5 +1,6 @@
 package org.tinygame.tankwar.entity;
 
+import lombok.Getter;
 import org.tinygame.tankwar.util.ResourceManager;
 
 import java.awt.*;
@@ -7,13 +8,15 @@ import java.awt.*;
 /**
  * 爆炸效果类
  */
+@Getter
 public class Explode {
     public static final int WIDTH = ResourceManager.explodes[0].getWidth();
     public static final int HEIGHT = ResourceManager.explodes[0].getHeight();
 
-    private int x, y;
-    private boolean living = true;
-    private int step = 0;
+    private final int x, y;
+
+    private boolean inactive;
+    private int step;
 
     public Explode(int x, int y) {
         this.x = x;
@@ -21,16 +24,12 @@ public class Explode {
     }
 
     public void paint(Graphics g) {
-        if (!living) return;
+        if (inactive) return;
 
         g.drawImage(ResourceManager.explodes[step++], x, y, null);
 
         if (step >= ResourceManager.explodes.length) {
-            living = false;
+            inactive = true;
         }
-    }
-
-    public boolean isLiving() {
-        return living;
     }
 }

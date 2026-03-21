@@ -7,8 +7,8 @@ import org.tinygame.tankwar.enums.Group;
 import java.util.concurrent.TimeUnit;
 
 public class Main {
-    static void main() {
-        TankFrame tf = new TankFrame();
+    void main() {
+        var tf = new TankFrame();
 
         // 初始化敌军坦克
         for (int i = 0; i < 5; i++) {
@@ -19,7 +19,7 @@ public class Main {
             while (true) {
                 try {
                     TimeUnit.MILLISECONDS.sleep(50);
-                } catch (InterruptedException e) {
+                } catch (InterruptedException _) {
                     break;
                 }
                 tf.repaint();
