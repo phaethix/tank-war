@@ -24,6 +24,8 @@ public class Bullet {
 
     private int x, y;
     private boolean inactive;
+    
+    private final Rectangle rect = new Rectangle();
 
     public Bullet(int x, int y, Dir dir, Group group, TankFrame frame) {
         this.x = x;
@@ -31,6 +33,10 @@ public class Bullet {
         this.dir = dir;
         this.group = group;
         this.frame = frame;
+        rect.x = this.x;
+        rect.y = this.y;
+        rect.width = WIDTH;
+        rect.height = HEIGHT;
     }
 
     public void paint(Graphics g) {
@@ -55,6 +61,10 @@ public class Bullet {
             case DOWN   -> y += SPEED;
         }
 
+        // 更新碰撞矩形位置
+        rect.x = this.x;
+        rect.y = this.y;
+
         if (x < 0 || y < 0 || x > TankFrame.GAME_WIDTH || y > TankFrame.GAME_HEIGHT) {
             inactive = true;
         }
@@ -66,9 +76,7 @@ public class Bullet {
             return;
         }
 
-        var r1 = new Rectangle(this.x, this.y, WIDTH, HEIGHT);
-        var r2 = new Rectangle(tank.getX(), tank.getY(), Tank.WIDTH, Tank.HEIGHT);
-        if (r1.intersects(r2)) {
+        if (rect.intersects(tank.getRect())) {
             // 在坦克中心位置产生爆炸效果
             int ex = tank.getX() + Tank.WIDTH / 2 - Explode.WIDTH / 2;
             int ey = tank.getY() + Tank.HEIGHT / 2 - Explode.HEIGHT / 2;
