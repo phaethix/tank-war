@@ -97,6 +97,14 @@ public class TankFrame extends Frame {
         bullets.forEach(bullet -> bullet.paint(g));
         bullets.forEach(bullet -> tanks.forEach(bullet::collideWith));
         explodes.forEach(explode -> explode.paint(g));
+
+        // 坦克间碰撞检测（敌军互撞 + 玩家与敌军）
+        for (int i = 0; i < tanks.size(); i++) {
+            for (int j = i + 1; j < tanks.size(); j++) {
+                tanks.get(i).collideWith(tanks.get(j));
+            }
+            tank.collideWith(tanks.get(i));
+        }
     }
 
     Image offScreenImage = null;
