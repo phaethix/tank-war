@@ -26,6 +26,7 @@ public class Tank {
     private final TankFrame frame;
     private final Group group;
     private final Random random = new Random();
+    private final Rectangle rect = new Rectangle(); 
 
     private int x, y;
     private int prevX, prevY;
@@ -39,6 +40,10 @@ public class Tank {
         this.dir = dir;
         this.group = group;
         this.frame = frame;
+        rect.x = this.x;
+		rect.y = this.y;
+		rect.width = WIDTH;
+		rect.height = HEIGHT;
     }
 
     public void paint(Graphics g) {
@@ -73,17 +78,17 @@ public class Tank {
 
         boundsCheck();
 
-        if (group == Group.BAD && random.nextInt(100) > 80) {
+        // 更新碰撞矩形位置
+        rect.x = this.x;
+		rect.y = this.y;
+
+        if (group == Group.BAD && random.nextInt(100) > 95) {
             this.fire();
         }
 
         if (group == Group.BAD && random.nextInt(100) > 95) {
             this.dir = Dir.values()[random.nextInt(Dir.values().length)];
         }
-    }
-
-    public Rectangle getRect() {
-        return new Rectangle(x, y, WIDTH, HEIGHT);
     }
 
     // 坦克间碰撞检测：碰撞后双方回退到移动前的位置
