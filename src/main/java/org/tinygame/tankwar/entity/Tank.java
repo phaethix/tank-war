@@ -28,6 +28,7 @@ public class Tank {
     private final Random random = new Random();
 
     private int x, y;
+    private int prevX, prevY;
     @Setter private Dir dir;
     @Setter private boolean moving;
     private boolean inactive;
@@ -59,13 +60,15 @@ public class Tank {
             Audio.play(Audio.TANK_MOVE);
         }
 
+        // 保存移动前的位置，碰撞时可回退
+        prevX = x;
+        prevY = y;
+
         switch (dir) {
-            case LEFT -> x -= SPEED;
-            case UP -> y -= SPEED;
-            case RIGHT -> x += SPEED;
-            case DOWN -> y += SPEED;
-            default -> {
-            }
+            case LEFT   -> x -= SPEED;
+            case UP     -> y -= SPEED;
+            case RIGHT  -> x += SPEED;
+            case DOWN   -> y += SPEED;
         }
 
         boundsCheck();
@@ -77,6 +80,25 @@ public class Tank {
         if (group == Group.BAD && random.nextInt(100) > 95) {
             this.dir = Dir.values()[random.nextInt(Dir.values().length)];
         }
+    }
+
+    public Rectangle getRect() {
+        return new Rectangle(x, y, WIDTH, HEIGHT);
+    }
+
+    // 坦克间碰撞检测：碰撞后双方回退到移动前的位置
+    public void collideWith(Tank other) {
+        if (this == other || this.inactive || other.inactive) return;
+
+        if (this.getRect().intersects(other.getRect())) {
+            this.rollback();
+            other.rollback();
+        }
+    }
+
+    private void rollback() {
+        x = prevX;
+        y = prevY;
     }
 
     private void boundsCheck() {
