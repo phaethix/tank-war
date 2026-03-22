@@ -1,5 +1,6 @@
 package org.tinygame.tankwar;
 
+import org.tinygame.tankwar.config.GameConfig;
 import org.tinygame.tankwar.entity.Bullet;
 import org.tinygame.tankwar.entity.Explode;
 import org.tinygame.tankwar.entity.Tank;
@@ -19,15 +20,19 @@ import java.util.List;
  * 坦克大战游戏主窗口类
  */
 public class TankFrame extends Frame {
-    public static final int GAME_WIDTH = 800, GAME_HEIGHT = 600;
+    public static final int GAME_WIDTH = GameConfig.CFG.window.width();
+    public static final int GAME_HEIGHT = GameConfig.CFG.window.height();
 
-    Tank tank = new Tank(210, 400, Dir.UP, Group.GOOD, this);
+    Tank tank = new Tank(
+            GameConfig.CFG.playerTank.initX(),
+            GameConfig.CFG.playerTank.initY(),
+            Dir.UP, Group.GOOD, this);
     public List<Tank> tanks = new ArrayList<>();
     public List<Bullet> bullets = new ArrayList<>();
     public List<Explode> explodes = new ArrayList<>();
 
     public TankFrame() {
-        this.setTitle("Tank War");
+        this.setTitle(GameConfig.CFG.window.title());
         this.setVisible(true);
         this.setResizable(false);
         this.setSize(GAME_WIDTH, GAME_HEIGHT);
@@ -50,12 +55,12 @@ public class TankFrame extends Frame {
         @Override
         public void keyPressed(KeyEvent e) {
             switch (e.getKeyCode()) {
-                case KeyEvent.VK_LEFT   -> bL = true;
-                case KeyEvent.VK_UP     -> bU = true;
-                case KeyEvent.VK_RIGHT  -> bR = true;
-                case KeyEvent.VK_DOWN   -> bD = true;
-                case KeyEvent.VK_SPACE  -> tank.fire();
-                case KeyEvent.VK_Q      -> Audio.toggleBgm();
+                case KeyEvent.VK_LEFT -> bL = true;
+                case KeyEvent.VK_UP -> bU = true;
+                case KeyEvent.VK_RIGHT -> bR = true;
+                case KeyEvent.VK_DOWN -> bD = true;
+                case KeyEvent.VK_SPACE -> tank.fire();
+                case KeyEvent.VK_Q -> Audio.toggleBgm();
             }
             updateTankDir();
         }
@@ -63,10 +68,10 @@ public class TankFrame extends Frame {
         @Override
         public void keyReleased(KeyEvent e) {
             switch (e.getKeyCode()) {
-                case KeyEvent.VK_LEFT   -> bL = false;
-                case KeyEvent.VK_UP     -> bU = false;
-                case KeyEvent.VK_RIGHT  -> bR = false;
-                case KeyEvent.VK_DOWN   -> bD = false;
+                case KeyEvent.VK_LEFT -> bL = false;
+                case KeyEvent.VK_UP -> bU = false;
+                case KeyEvent.VK_RIGHT -> bR = false;
+                case KeyEvent.VK_DOWN -> bD = false;
             }
             updateTankDir();
         }
@@ -74,10 +79,14 @@ public class TankFrame extends Frame {
         private void updateTankDir() {
             tank.setMoving(bL || bU || bR || bD);
 
-            if (bL)      tank.setDir(Dir.LEFT);
-            else if (bU) tank.setDir(Dir.UP);
-            else if (bR) tank.setDir(Dir.RIGHT);
-            else if (bD) tank.setDir(Dir.DOWN);
+            if (bL)
+                tank.setDir(Dir.LEFT);
+            else if (bU)
+                tank.setDir(Dir.UP);
+            else if (bR)
+                tank.setDir(Dir.RIGHT);
+            else if (bD)
+                tank.setDir(Dir.DOWN);
         }
     }
 

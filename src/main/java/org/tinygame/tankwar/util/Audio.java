@@ -5,14 +5,15 @@ import java.io.BufferedInputStream;
 import java.io.InputStream;
 import java.util.Objects;
 
+import org.tinygame.tankwar.config.GameConfig;
 /**
  * 音频工具类
  */
 public final class Audio {
-    public static final String TANK_FIRE = "audio/tank_fire.wav";
-    public static final String EXPLODE = "audio/explode.wav";
-    public static final String TANK_MOVE = "audio/tank_move.wav";
-    public static final String BGM = "audio/bgm.wav";
+    public static final String TANK_FIRE = GameConfig.CFG.audio.fire();
+    public static final String EXPLODE = GameConfig.CFG.audio.explode();
+    public static final String TANK_MOVE = GameConfig.CFG.audio.move();
+    public static final String BGM = GameConfig.CFG.audio.bgm();
 
     private static Clip bgmClip;
     private static boolean bgmPlaying;

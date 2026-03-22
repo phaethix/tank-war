@@ -1,5 +1,6 @@
 package org.tinygame.tankwar;
 
+import org.tinygame.tankwar.config.GameConfig;
 import org.tinygame.tankwar.entity.Tank;
 import org.tinygame.tankwar.enums.Dir;
 import org.tinygame.tankwar.enums.Group;
@@ -11,14 +12,16 @@ public class Main {
         var tf = new TankFrame();
 
         // 初始化敌军坦克
-        for (int i = 0; i < 5; i++) {
-            tf.tanks.add(new Tank(50 + i * 80, 200, Dir.DOWN, Group.BAD, tf));
+        for (int i = 0; i < GameConfig.CFG.enemyTank.count(); i++) {
+            int tx = GameConfig.CFG.enemyTank.startX() + (i % 10) * GameConfig.CFG.enemyTank.spacingX();
+            int ty = GameConfig.CFG.enemyTank.startY() + (i / 10) * 60;
+            tf.tanks.add(new Tank(tx, ty, Dir.random(), Group.BAD, tf));
         }
 
         Thread.startVirtualThread(() -> {
             while (true) {
                 try {
-                    TimeUnit.MILLISECONDS.sleep(50);
+                    TimeUnit.MILLISECONDS.sleep(GameConfig.CFG.gameLoop.frameIntervalMs());
                 } catch (InterruptedException _) {
                     break;
                 }
