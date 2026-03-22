@@ -2,6 +2,7 @@ package org.tinygame.tankwar.entity;
 
 import lombok.Getter;
 import org.tinygame.tankwar.TankFrame;
+import org.tinygame.tankwar.config.GameConfig;
 import org.tinygame.tankwar.enums.Dir;
 import org.tinygame.tankwar.enums.Group;
 import org.tinygame.tankwar.util.Audio;
@@ -14,7 +15,7 @@ import java.awt.*;
  */
 @Getter
 public class Bullet {
-    private static final int SPEED = 10;
+    private static final int SPEED = GameConfig.CFG.bullet.speed();
     public static final int WIDTH = ResourceManager.bulletU.getWidth();
     public static final int HEIGHT = ResourceManager.bulletU.getHeight();
 
@@ -24,7 +25,7 @@ public class Bullet {
 
     private int x, y;
     private boolean inactive;
-    
+
     private final Rectangle rect = new Rectangle();
 
     public Bullet(int x, int y, Dir dir, Group group, TankFrame frame) {
