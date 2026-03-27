@@ -35,6 +35,8 @@ jobs:
       - name: jpackage for macOS
         if: matrix.os == 'macos-latest'
         run: |
+          export JAVA_HOME=$(/usr/libexec/java_home -v 25)
+          
           jpackage \
             --name "TankWar" \
             --input target \
@@ -45,7 +47,32 @@ jobs:
             --dest dist
 
           cd dist
+          # 此时目录结构为 dist/TankWar.app
+            
+      # =================================================================
+      # 🛡️ 【修复版】免费本地签名与清理隔离属性
+      # =================================================================
+      - name: Sign & Clean macOS App (Free Signing)
+        if: matrix.os == 'macos-latest'
+        run: |
+          APP_PATH="./dist/TankWar.app"
+          
+          echo "🔒 Starting free local signing..."
+          codesign --force --deep --sign - "$APP_PATH" || {
+            echo "⚠️ Warning: Local signing identity not found, proceeding without valid signature."
+            echo "This is expected for free accounts. The app will still work after user opens it once."
+          }
+          
+          echo "🧹 Removing quarantine attributes (xattr)..."
+          xattr -cr "$APP_PATH" || {
+            echo "⚠️ Warning: Could not remove quarantine attributes. This might cause 'damaged' warning on first launch."
+          }
+          
+          echo "📦 Re-zipping the signed application..."
+          rm -f TankWar-macOS.zip
           zip -r TankWar-macOS.zip TankWar.app
+
+          echo "✅ macOS build step completed!"
 
       # -------------------------------------------------------------
       # 针对 Windows 打包 (绿色免安装 zip)
@@ -135,7 +162,21 @@ jobs:
             - **Pause and Resume**: Press `P` to freeze the battlefield and continue whenever you are ready.
             - **Complete Audio System**: Immersive background music and synchronized sound effects for movement, firing, and explosions.
 
-            Download the archive for your platform, extract it, and run the app directly. 🎮
+            ---
+            ### ⚠️ **IMPORTANT FOR MAC USERS**
+            Due to macOS security restrictions (Gatekeeper), you might see an error saying **"TankWar is damaged and can't be opened"** upon first download. This is normal for apps not signed by a paid Apple Developer account.
+            
+            **How to fix this:**
+            1. **Right-click** (or Control+Click) on the `TankWar.app` file inside the ZIP.
+            2. Select **"Open"**.
+            3. In the popup dialog, click **"Open"** again.
+            
+            *Alternative Method:*
+            Go to **System Settings > Privacy & Security**, scroll down to the bottom, and click **"Open Anyway"** next to the blocked message.
+            
+            Once opened once, you can double-click to launch normally in the future. 🍎
+
+            Download the archive for your platform, extract it, and enjoy! 🎮
           files: |
             artifacts/TankWar-macOS/TankWar-macOS.zip
             artifacts/TankWar-Windows/TankWar-Windows.zip
