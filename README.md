@@ -1,18 +1,12 @@
-<div align="center">
-
 # 🎮 Tank War
 
 **A classic tank battle game built purely in Java with modern language features.**
 
-[![Java](https://img.shields.io/badge/Java-25-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white)](https://openjdk.org/)
-[![Maven](https://img.shields.io/badge/Maven-3.9+-C71A36?style=for-the-badge&logo=apachemaven&logoColor=white)](https://maven.apache.org/)
-[![License](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)](LICENSE)
+[![Java](https://img.shields.io/badge/Java-25-ED8B00?style=flat-square&logo=openjdk&logoColor=white)](https://openjdk.org/)
+[![Maven](https://img.shields.io/badge/Maven-3.9+-C71A36?style=flat-square&logo=apachemaven&logoColor=white)](https://maven.apache.org/)
+[![License](https://img.shields.io/badge/License-MIT-blue?style=flat-square)](LICENSE)
 
-*Control your tank, dodge enemy fire, and destroy all opponents!*
-
-</div>
-
----
+> *Control your tank, dodge enemy fire, and destroy all opponents!*
 
 ## ✨ Features
 
@@ -22,8 +16,6 @@
 - 🔊 **Full audio system** — Background music toggle, fire/move/explosion sound effects
 - 🖼️ **Sprite-based rendering** — Directional sprites with runtime image rotation
 - ⚙️ **Externalized configuration** — All game parameters in `game.properties`, auto-bound to Java Records
-
----
 
 ## 🏗️ Architecture
 
@@ -96,21 +88,14 @@ flowchart TB
     class Audio,ResMgr,ImageProc resource
 ```
 
----
-
 ## 🎮 Controls
 
 | Key | Action |
-|:---:|--------|
+| :---: | :--- |
 | `↑` `↓` `←` `→` | Move tank |
 | `Space` | Fire bullet |
 | `Q` | Toggle background music |
 
----
-
-
 ## 📄 License
 
 This project is licensed under the [MIT License](LICENSE).
-
----
