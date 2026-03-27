@@ -30,14 +30,12 @@ public class TankFrame extends Frame {
     public static final int GAME_WIDTH = GameConfig.CFG.window.width();
     public static final int GAME_HEIGHT = GameConfig.CFG.window.height();
 
-    Tank tank = new Tank(
-            GameConfig.CFG.playerTank.initX(),
-            GameConfig.CFG.playerTank.initY(),
-            Dir.UP, Group.GOOD, this);
+    Tank tank;
     public List<Tank> tanks = new ArrayList<>();
     public List<Bullet> bullets = new ArrayList<>();
     public List<Explode> explodes = new ArrayList<>();
     private GameState gameState = GameState.PLAYING;
+    private final KeyListener keyListener = new KeyListener();
 
     public TankFrame() {
         this.setTitle(GameConfig.CFG.window.title());
@@ -54,7 +52,8 @@ public class TankFrame extends Frame {
             }
         });
 
-        this.addKeyListener(new KeyListener());
+        this.addKeyListener(keyListener);
+        resetGame();
     }
 
     class KeyListener extends KeyAdapter {
@@ -62,6 +61,17 @@ public class TankFrame extends Frame {
 
         @Override
         public void keyPressed(KeyEvent e) {
+            switch (e.getKeyCode()) {
+                case KeyEvent.VK_R -> {
+                    resetGame();
+                    return;
+                }
+                case KeyEvent.VK_Q -> {
+                    Audio.toggleBgm();
+                    return;
+                }
+            }
+
             if (gameState != GameState.PLAYING)
                 return;
 
@@ -71,13 +81,15 @@ public class TankFrame extends Frame {
                 case KeyEvent.VK_RIGHT -> bR = true;
                 case KeyEvent.VK_DOWN -> bD = true;
                 case KeyEvent.VK_SPACE -> tank.fire();
-                case KeyEvent.VK_Q -> Audio.toggleBgm();
             }
             updateTankDir();
         }
 
         @Override
         public void keyReleased(KeyEvent e) {
+            if (e.getKeyCode() == KeyEvent.VK_R || e.getKeyCode() == KeyEvent.VK_Q)
+                return;
+
             if (gameState != GameState.PLAYING)
                 return;
 
@@ -101,6 +113,13 @@ public class TankFrame extends Frame {
                 tank.setDir(Dir.RIGHT);
             else if (bD)
                 tank.setDir(Dir.DOWN);
+        }
+
+        void reset() {
+            bL = false;
+            bU = false;
+            bR = false;
+            bD = false;
         }
     }
 
@@ -179,6 +198,27 @@ public class TankFrame extends Frame {
         }
     }
 
+    private void resetGame() {
+        gameState = GameState.PLAYING;
+        bullets.clear();
+        tanks.clear();
+        explodes.clear();
+        keyListener.reset();
+
+        tank = new Tank(
+                GameConfig.CFG.playerTank.initX(),
+                GameConfig.CFG.playerTank.initY(),
+                Dir.UP, Group.GOOD, this);
+
+        for (int i = 0; i < GameConfig.CFG.enemyTank.count(); i++) {
+            int tx = GameConfig.CFG.enemyTank.startX() + (i % 10) * GameConfig.CFG.enemyTank.spacingX();
+            int ty = GameConfig.CFG.enemyTank.startY() + (i / 10) * 60;
+            tanks.add(new Tank(tx, ty, Dir.random(), Group.BAD, this));
+        }
+
+        repaint();
+    }
+
     private void drawGameState(Graphics g) {
         if (gameState == GameState.PLAYING)
             return;
@@ -195,6 +235,13 @@ public class TankFrame extends Frame {
         int x = (GAME_WIDTH - metrics.stringWidth(message)) / 2;
         int y = GAME_HEIGHT / 2;
         graphics.drawString(message, x, y);
+
+        graphics.setFont(new Font("SansSerif", Font.PLAIN, 20));
+        graphics.setColor(Color.WHITE);
+        String restartHint = "Press R to restart";
+        FontMetrics hintMetrics = graphics.getFontMetrics();
+        int hintX = (GAME_WIDTH - hintMetrics.stringWidth(restartHint)) / 2;
+        graphics.drawString(restartHint, hintX, y + 40);
         graphics.dispose();
     }
 }
