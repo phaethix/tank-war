@@ -48,7 +48,15 @@ public class Tank {
         rect.height = HEIGHT;
     }
 
+    // 默认按正常游戏帧处理：绘制坦克并推进移动/AI。
+    // 暂停时会改走 paint(g, false)，只保留当前画面，不更新状态。
     public void paint(Graphics g) {
+        paint(g, true);
+    }
+
+    public void paint(Graphics g, boolean advancing) {
+        if (inactive) return;
+
         var isGood = group == Group.GOOD;
         var image = switch (dir) {
             case LEFT  -> isGood ? ResourceManager.tankL : ResourceManager.badTankL;
@@ -57,7 +65,9 @@ public class Tank {
             case DOWN  -> isGood ? ResourceManager.tankD : ResourceManager.badTankD;
         };
         g.drawImage(image, x, y, null);
-        move();
+        if (advancing) {
+            move();
+        }
     }
 
     private void move() {
