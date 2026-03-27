@@ -62,6 +62,10 @@ public class TankFrame extends Frame {
         @Override
         public void keyPressed(KeyEvent e) {
             switch (e.getKeyCode()) {
+                case KeyEvent.VK_P -> {
+                    togglePause();
+                    return;
+                }
                 case KeyEvent.VK_R -> {
                     resetGame();
                     return;
@@ -87,7 +91,7 @@ public class TankFrame extends Frame {
 
         @Override
         public void keyReleased(KeyEvent e) {
-            if (e.getKeyCode() == KeyEvent.VK_R || e.getKeyCode() == KeyEvent.VK_Q)
+            if (e.getKeyCode() == KeyEvent.VK_P || e.getKeyCode() == KeyEvent.VK_R || e.getKeyCode() == KeyEvent.VK_Q)
                 return;
 
             if (gameState != GameState.PLAYING)
@@ -121,34 +125,44 @@ public class TankFrame extends Frame {
             bR = false;
             bD = false;
         }
+
+        boolean isMovingKeyPressed() {
+            return bL || bU || bR || bD;
+        }
     }
 
     @Override
     public void paint(Graphics g) {
+        boolean advancing = gameState == GameState.PLAYING;
+
         Color color = g.getColor();
         g.setColor(Color.WHITE);
         g.drawString("Bullets: " + bullets.size(), 10, 60);
         g.drawString("Enemies: " + tanks.size(), 10, 80);
         g.setColor(color);
 
-        tank.paint(g);
+        tank.setMoving(advancing && keyListener.isMovingKeyPressed());
+        tank.paint(g, advancing);
         tanks.forEach(t -> {
-            t.setMoving(gameState == GameState.PLAYING);
-            t.paint(g);
+            t.setMoving(advancing);
+            t.paint(g, advancing);
         });
-        bullets.forEach(bullet -> bullet.paint(g));
-        bullets.forEach(bullet -> {
-            tanks.forEach(bullet::collideWith);
-            bullet.collideWith(tank);
-        });
-        explodes.forEach(explode -> explode.paint(g));
+        bullets.forEach(bullet -> bullet.paint(g, advancing));
+        explodes.forEach(explode -> explode.paint(g, advancing));
 
-        // 坦克间碰撞检测（敌军互撞 + 玩家与敌军）
-        for (int i = 0; i < tanks.size(); i++) {
-            for (int j = i + 1; j < tanks.size(); j++) {
-                tanks.get(i).collideWith(tanks.get(j));
+        if (advancing) {
+            bullets.forEach(bullet -> {
+                tanks.forEach(bullet::collideWith);
+                bullet.collideWith(tank);
+            });
+
+            // 坦克间碰撞检测（敌军互撞 + 玩家与敌军）
+            for (int i = 0; i < tanks.size(); i++) {
+                for (int j = i + 1; j < tanks.size(); j++) {
+                    tanks.get(i).collideWith(tanks.get(j));
+                }
+                tank.collideWith(tanks.get(i));
             }
-            tank.collideWith(tanks.get(i));
         }
 
         drawGameState(g);
@@ -167,14 +181,16 @@ public class TankFrame extends Frame {
         gOffScreen.fillRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
         gOffScreen.setColor(c);
 
-        // 移除不活跃的子弹
-        bullets.removeIf(Bullet::isInactive);
-        // 移除不活跃的坦克
-        tanks.removeIf(Tank::isInactive);
-        // 移除已播放完毕的爆炸
-        explodes.removeIf(Explode::isInactive);
+        if (gameState == GameState.PLAYING) {
+            // 移除不活跃的子弹
+            bullets.removeIf(Bullet::isInactive);
+            // 移除不活跃的坦克
+            tanks.removeIf(Tank::isInactive);
+            // 移除已播放完毕的爆炸
+            explodes.removeIf(Explode::isInactive);
 
-        updateGameState();
+            updateGameState();
+        }
 
         paint(gOffScreen);
         g.drawImage(offScreenImage, 0, 0, null);
@@ -219,6 +235,21 @@ public class TankFrame extends Frame {
         repaint();
     }
 
+    private void togglePause() {
+        if (gameState == GameState.VICTORY || gameState == GameState.DEFEAT)
+            return;
+
+        if (gameState == GameState.PAUSED) {
+            gameState = GameState.PLAYING;
+            tank.setMoving(keyListener.isMovingKeyPressed());
+        } else {
+            gameState = GameState.PAUSED;
+            tank.setMoving(false);
+        }
+
+        repaint();
+    }
+
     private void drawGameState(Graphics g) {
         if (gameState == GameState.PLAYING)
             return;
@@ -228,9 +259,19 @@ public class TankFrame extends Frame {
         graphics.fillRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
 
         graphics.setFont(new Font("SansSerif", Font.BOLD, 48));
-        graphics.setColor(gameState == GameState.VICTORY ? Color.GREEN : Color.RED);
+        graphics.setColor(switch (gameState) {
+            case PAUSED -> Color.YELLOW;
+            case VICTORY -> Color.GREEN;
+            case DEFEAT -> Color.RED;
+            default -> Color.WHITE;
+        });
 
-        String message = gameState == GameState.VICTORY ? "Victory!" : "Game Over!";
+        String message = switch (gameState) {
+            case PAUSED -> "Paused";
+            case VICTORY -> "Victory!";
+            case DEFEAT -> "Game Over!";
+            default -> "";
+        };
         FontMetrics metrics = graphics.getFontMetrics();
         int x = (GAME_WIDTH - metrics.stringWidth(message)) / 2;
         int y = GAME_HEIGHT / 2;
@@ -238,10 +279,15 @@ public class TankFrame extends Frame {
 
         graphics.setFont(new Font("SansSerif", Font.PLAIN, 20));
         graphics.setColor(Color.WHITE);
-        String restartHint = "Press R to restart";
+        String primaryHint = gameState == GameState.PAUSED ? "Press P to resume" : "Press R to restart";
         FontMetrics hintMetrics = graphics.getFontMetrics();
-        int hintX = (GAME_WIDTH - hintMetrics.stringWidth(restartHint)) / 2;
-        graphics.drawString(restartHint, hintX, y + 40);
+        int hintX = (GAME_WIDTH - hintMetrics.stringWidth(primaryHint)) / 2;
+        graphics.drawString(primaryHint, hintX, y + 40);
+
+        String secondaryHint = gameState == GameState.PAUSED ? "Press R to start a new match" : "Press P to pause during play";
+        FontMetrics secondaryMetrics = graphics.getFontMetrics();
+        int secondaryX = (GAME_WIDTH - secondaryMetrics.stringWidth(secondaryHint)) / 2;
+        graphics.drawString(secondaryHint, secondaryX, y + 70);
         graphics.dispose();
     }
 }

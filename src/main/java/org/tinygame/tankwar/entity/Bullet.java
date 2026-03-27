@@ -40,7 +40,13 @@ public class Bullet {
         rect.height = HEIGHT;
     }
 
+    // 默认按正常游戏帧处理：绘制子弹并推进位置。
+    // 暂停时会改走 paint(g, false)，只绘制当前帧，不继续移动。
     public void paint(Graphics g) {
+        paint(g, true);
+    }
+
+    public void paint(Graphics g, boolean advancing) {
         if (inactive) return;
 
         var image = switch (dir) {
@@ -51,7 +57,9 @@ public class Bullet {
         };
         g.drawImage(image, x, y, null);
 
-        move();
+        if (advancing) {
+            move();
+        }
     }
 
     private void move() {
