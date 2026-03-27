@@ -1,20 +1,27 @@
 package org.tinygame.tankwar;
 
-import org.tinygame.tankwar.config.GameConfig;
-import org.tinygame.tankwar.entity.Bullet;
-import org.tinygame.tankwar.entity.Explode;
-import org.tinygame.tankwar.entity.Tank;
-import org.tinygame.tankwar.enums.Dir;
-import org.tinygame.tankwar.enums.Group;
-import org.tinygame.tankwar.util.Audio;
-
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Frame;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.tinygame.tankwar.config.GameConfig;
+import org.tinygame.tankwar.entity.Bullet;
+import org.tinygame.tankwar.entity.Explode;
+import org.tinygame.tankwar.entity.Tank;
+import org.tinygame.tankwar.enums.Dir;
+import org.tinygame.tankwar.enums.GameState;
+import org.tinygame.tankwar.enums.Group;
+import org.tinygame.tankwar.util.Audio;
 
 /**
  * 坦克大战游戏主窗口类
@@ -30,6 +37,7 @@ public class TankFrame extends Frame {
     public List<Tank> tanks = new ArrayList<>();
     public List<Bullet> bullets = new ArrayList<>();
     public List<Explode> explodes = new ArrayList<>();
+    private GameState gameState = GameState.PLAYING;
 
     public TankFrame() {
         this.setTitle(GameConfig.CFG.window.title());
@@ -54,6 +62,9 @@ public class TankFrame extends Frame {
 
         @Override
         public void keyPressed(KeyEvent e) {
+            if (gameState != GameState.PLAYING)
+                return;
+
             switch (e.getKeyCode()) {
                 case KeyEvent.VK_LEFT -> bL = true;
                 case KeyEvent.VK_UP -> bU = true;
@@ -67,6 +78,9 @@ public class TankFrame extends Frame {
 
         @Override
         public void keyReleased(KeyEvent e) {
+            if (gameState != GameState.PLAYING)
+                return;
+
             switch (e.getKeyCode()) {
                 case KeyEvent.VK_LEFT -> bL = false;
                 case KeyEvent.VK_UP -> bU = false;
@@ -100,11 +114,14 @@ public class TankFrame extends Frame {
 
         tank.paint(g);
         tanks.forEach(t -> {
-            t.setMoving(true);
+            t.setMoving(gameState == GameState.PLAYING);
             t.paint(g);
         });
         bullets.forEach(bullet -> bullet.paint(g));
-        bullets.forEach(bullet -> tanks.forEach(bullet::collideWith));
+        bullets.forEach(bullet -> {
+            tanks.forEach(bullet::collideWith);
+            bullet.collideWith(tank);
+        });
         explodes.forEach(explode -> explode.paint(g));
 
         // 坦克间碰撞检测（敌军互撞 + 玩家与敌军）
@@ -114,6 +131,8 @@ public class TankFrame extends Frame {
             }
             tank.collideWith(tanks.get(i));
         }
+
+        drawGameState(g);
     }
 
     Image offScreenImage = null;
@@ -136,7 +155,46 @@ public class TankFrame extends Frame {
         // 移除已播放完毕的爆炸
         explodes.removeIf(Explode::isInactive);
 
+        updateGameState();
+
         paint(gOffScreen);
         g.drawImage(offScreenImage, 0, 0, null);
+    }
+
+    private void updateGameState() {
+        if (gameState != GameState.PLAYING)
+            return;
+
+        if (tank.isInactive()) {
+            gameState = GameState.DEFEAT;
+            tank.setMoving(false);
+            Audio.stopBgm();
+            return;
+        }
+
+        if (tanks.isEmpty()) {
+            gameState = GameState.VICTORY;
+            tank.setMoving(false);
+            Audio.stopBgm();
+        }
+    }
+
+    private void drawGameState(Graphics g) {
+        if (gameState == GameState.PLAYING)
+            return;
+
+        var graphics = (Graphics2D) g.create();
+        graphics.setColor(new Color(0, 0, 0, 170));
+        graphics.fillRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
+
+        graphics.setFont(new Font("SansSerif", Font.BOLD, 48));
+        graphics.setColor(gameState == GameState.VICTORY ? Color.GREEN : Color.RED);
+
+        String message = gameState == GameState.VICTORY ? "Victory!" : "Game Over!";
+        FontMetrics metrics = graphics.getFontMetrics();
+        int x = (GAME_WIDTH - metrics.stringWidth(message)) / 2;
+        int y = GAME_HEIGHT / 2;
+        graphics.drawString(message, x, y);
+        graphics.dispose();
     }
 }

@@ -49,6 +49,8 @@ public class Tank {
     }
 
     public void paint(Graphics g) {
+        if (inactive) return;
+
         var isGood = group == Group.GOOD;
         var image = switch (dir) {
             case LEFT  -> isGood ? ResourceManager.tankL : ResourceManager.badTankL;
