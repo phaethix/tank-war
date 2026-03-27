@@ -1,12 +1,20 @@
 # 🎮 Tank War
 
+[![Java 25](https://img.shields.io/badge/Java-25-F89820?logo=openjdk&logoColor=white)](https://openjdk.org/)
+[![Apache Maven 3.9+](https://img.shields.io/badge/Maven-3.9%2B-C71A36?logo=apachemaven&logoColor=white)](https://maven.apache.org/)
+[![MIT License](https://img.shields.io/badge/License-MIT-2EA44F)](LICENSE)
+
 **A classic tank battle game built purely in Java with modern language features.**
 
-[![Java](https://img.shields.io/badge/Java-25-ED8B00?style=flat-square&logo=openjdk&logoColor=white)](https://openjdk.org/)
-[![Maven](https://img.shields.io/badge/Maven-3.9+-C71A36?style=flat-square&logo=apachemaven&logoColor=white)](https://maven.apache.org/)
-[![License](https://img.shields.io/badge/License-MIT-blue?style=flat-square)](LICENSE)
-
 > *Control your tank, dodge enemy fire, and destroy all opponents!*
+
+## ✨ Gameplay
+
+- Defeat all enemy tanks to win the match.
+- Getting destroyed ends the current round immediately.
+- A pause overlay is shown when the game is paused, and a result overlay is shown after victory or defeat.
+- Press `P` to pause or resume the current match.
+- Press `R` to restart at any time, whether the round is still in progress or already over.
 
 ## 🏗️ Architecture
 
@@ -85,7 +93,9 @@ flowchart TB
 | :---: | :--- |
 | `↑` `↓` `←` `→` | Move tank |
 | `Space` | Fire bullet |
+| `P` | Pause or resume the current match |
 | `Q` | Toggle background music |
+| `R` | Restart the current match |
 
 ## 📄 License
 
