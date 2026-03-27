@@ -23,7 +23,7 @@ jobs:
         uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: 25 
+          java-version: 25
           cache: maven
 
       - name: Build with Maven
@@ -47,24 +47,33 @@ jobs:
             --dest dist
 
           cd dist
-          # 此时目录结构为 dist/TankWar.app
-            
+          ls -la  # 调试用：查看生成的文件
+
       # =================================================================
-      # 🛡️ 【修复版】免费本地签名与清理隔离属性
+      # 🛡️ 【正确版】免费本地签名与清理隔离属性 (修复 Exit Code 12)
       # =================================================================
       - name: Sign & Clean macOS App (Free Signing)
         if: matrix.os == 'macos-latest'
         run: |
           APP_PATH="./dist/TankWar.app"
           
-          echo "🔒 Starting free local signing..."
-          codesign --force --deep --sign - "$APP_PATH" || {
-            echo "⚠️ Warning: Local signing identity not found, proceeding without valid signature."
+          echo "🔒 Checking if app exists..."
+          if [ ! -d "$APP_PATH" ]; then
+            echo "❌ Error: TankWar.app not found at $APP_PATH"
+            exit 1
+          fi
+          
+          echo "🔒 Attempting free local signing (this may fail without a certificate)..."
+          # 【关键修改】使用 || true 确保即使 codesign 失败也不会中断流程
+          /usr/bin/codesign --force --deep --sign - "$APP_PATH" || {
+            echo "⚠️ Warning: Local signing identity not found or signature failed."
             echo "This is expected for free accounts. The app will still work after user opens it once."
+            echo "Continuing to next step..."
           }
           
           echo "🧹 Removing quarantine attributes (xattr)..."
-          xattr -cr "$APP_PATH" || {
+          # 同样使用 || true 防止 xattr 失败导致中断
+          /bin/xattr -cr "$APP_PATH" || {
             echo "⚠️ Warning: Could not remove quarantine attributes. This might cause 'damaged' warning on first launch."
           }
           
