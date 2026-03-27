@@ -30,7 +30,7 @@ jobs:
         run: mvn clean package -DskipTests
 
       # -------------------------------------------------------------
-      # 针对 macOS 打包 (.dmg 安装包)
+      # 针对 macOS 打包 (绿色免安装 zip)
       # -------------------------------------------------------------
       - name: jpackage for macOS
         if: matrix.os == 'macos-latest'
@@ -40,12 +40,15 @@ jobs:
             --input target \
             --main-jar tank-war-1.0-SNAPSHOT.jar \
             --main-class org.tinygame.tankwar.Main \
-            --type dmg \
+            --type app-image \
             --java-options "--enable-preview" \
             --dest dist
 
+          cd dist
+          zip -r TankWar-macOS.zip TankWar.app
+
       # -------------------------------------------------------------
-      # 针对 Windows 打包 (.exe 安装向导)
+      # 针对 Windows 打包 (绿色免安装 zip)
       # -------------------------------------------------------------
       - name: jpackage for Windows
         if: matrix.os == 'windows-latest'
@@ -55,11 +58,11 @@ jobs:
             --input target `
             --main-jar tank-war-1.0-SNAPSHOT.jar `
             --main-class org.tinygame.tankwar.Main `
-            --type exe `
-            --win-dir-chooser `
-            --win-shortcut `
+            --type app-image `
             --java-options "--enable-preview" `
             --dest dist
+
+          Compress-Archive -Path dist/TankWar -DestinationPath dist/TankWar-Windows.zip
 
       # -------------------------------------------------------------
       # 针对 Linux 打包 (绿色免安装 tar.gz)
@@ -87,14 +90,14 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: TankWar-macOS
-          path: dist/*.dmg
+          path: dist/TankWar-macOS.zip
 
       - name: Upload Windows Artifact
         if: matrix.os == 'windows-latest'
         uses: actions/upload-artifact@v4
         with:
           name: TankWar-Windows
-          path: dist/*.exe
+          path: dist/TankWar-Windows.zip
 
       - name: Upload Linux Artifact
         if: matrix.os == 'ubuntu-latest'
@@ -129,8 +132,8 @@ jobs:
             - **Intelligent Enemy AI**: Randomized movement, dynamic direction changes, and smart firing behavior.
             - **Complete Audio System**: Immersive background music and synchronized sound effects for moving, firing, and explosions.
 
-            Download the executable below and start playing! 🎮
+            Download the archive for your platform, extract it, and run the app directly. 🎮
           files: |
-            artifacts/TankWar-macOS/*.dmg
-            artifacts/TankWar-Windows/*.exe
+            artifacts/TankWar-macOS/TankWar-macOS.zip
+            artifacts/TankWar-Windows/TankWar-Windows.zip
             artifacts/TankWar-Linux/TankWar-Linux.tar.gz
