@@ -128,9 +128,12 @@ jobs:
             🚀 **This is our first official release!**
 
             ### ✨ Key Features in ${{ github.ref_name }}:
-            - **Smooth Combat**: 20 FPS game loop powered by Java virtual threads for seamless movement.
-            - **Intelligent Enemy AI**: Randomized movement, dynamic direction changes, and smart firing behavior.
-            - **Complete Audio System**: Immersive background music and synchronized sound effects for moving, firing, and explosions.
+            - **Smooth Combat**: 20 FPS game loop powered by Java virtual threads for responsive movement and shooting.
+            - **Intelligent Enemy AI**: Randomized movement, dynamic direction changes, and autonomous firing behavior.
+            - **Full Match Flow**: Built-in victory, defeat, and pause overlays for a clearer gameplay experience.
+            - **Instant Replay**: Press `R` at any time to restart the match without relaunching the game.
+            - **Pause and Resume**: Press `P` to freeze the battlefield and continue whenever you are ready.
+            - **Complete Audio System**: Immersive background music and synchronized sound effects for movement, firing, and explosions.
 
             Download the archive for your platform, extract it, and run the app directly. 🎮
           files: |
