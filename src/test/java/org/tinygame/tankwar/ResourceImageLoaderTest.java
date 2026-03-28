@@ -19,7 +19,7 @@ public class ResourceImageLoaderTest {
      */
     @Test
     public void testLoadImageFromResources() throws IOException {
-        String imagePath = "/images/GoodTank1.png";
+        String imagePath = "/images/tank/player/good_tank.png";
         URL imageUrl = getClass().getResource(imagePath);
 
         assertNotNull(imageUrl);

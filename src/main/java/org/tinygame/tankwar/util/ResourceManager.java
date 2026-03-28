@@ -12,6 +12,7 @@ public final class ResourceManager {
     public static final BufferedImage tankL, tankU, tankR, tankD;
     public static final BufferedImage badTankL, badTankU, badTankR, badTankD;
     public static final BufferedImage bulletL, bulletU, bulletR, bulletD;
+    public static final BufferedImage badBulletL, badBulletU, badBulletR, badBulletD;
     public static final BufferedImage[] explodes = new BufferedImage[GameConfig.CFG.image.explodeCount()];
 
     private ResourceManager() {
@@ -34,6 +35,10 @@ public final class ResourceManager {
             bulletL = ImageProcessor.rotateImage(bulletU, -90);
             bulletR = ImageProcessor.rotateImage(bulletU, 90);
             bulletD = ImageProcessor.rotateImage(bulletU, 180);
+            badBulletU = ImageProcessor.loadImage(GameConfig.CFG.image.enemyBullet());
+            badBulletL = ImageProcessor.rotateImage(badBulletU, -90);
+            badBulletR = ImageProcessor.rotateImage(badBulletU, 90);
+            badBulletD = ImageProcessor.rotateImage(badBulletU, 180);
             // 爆炸帧
             for (int i = 0; i < GameConfig.CFG.image.explodeCount(); i++) {
                 explodes[i] = ImageProcessor.loadImage(

@@ -15,7 +15,7 @@ public final class GameConfig {
     public record EnemyTank(int count, int startX, int spacingX, int startY, int spawnMaxY, int speed, int fireThreshold, int turnThreshold) {}
     public record Bullet(int speed) {}
     public record Boundary(int margin, int topOffset) {}
-    public record Image(String playerTank, String enemyTank, String bullet, String explodePrefix, String explodeSuffix, int explodeCount) {}
+    public record Image(String playerTank, String enemyTank, String bullet, String enemyBullet, String explodePrefix, String explodeSuffix, int explodeCount) {}
     public record Audio(String fire, String explode, String move, String bgm) {}
 
     private static final String CONFIG_FILE = "game.properties";

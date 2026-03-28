@@ -49,11 +49,19 @@ public class Bullet {
     public void paint(Graphics g, boolean advancing) {
         if (inactive) return;
 
-        var image = switch (dir) {
-            case LEFT   -> ResourceManager.bulletL;
-            case UP     -> ResourceManager.bulletU;
-            case RIGHT  -> ResourceManager.bulletR;
-            case DOWN   -> ResourceManager.bulletD;
+        var image = switch (group) {
+            case GOOD -> switch (dir) {
+                case LEFT   -> ResourceManager.bulletL;
+                case UP     -> ResourceManager.bulletU;
+                case RIGHT  -> ResourceManager.bulletR;
+                case DOWN   -> ResourceManager.bulletD;
+            };
+            case BAD -> switch (dir) {
+                case LEFT   -> ResourceManager.badBulletL;
+                case UP     -> ResourceManager.badBulletU;
+                case RIGHT  -> ResourceManager.badBulletR;
+                case DOWN   -> ResourceManager.badBulletD;
+            };
         };
         g.drawImage(image, x, y, null);
 
