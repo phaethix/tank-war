@@ -12,6 +12,6 @@ jpackage \
 
 sudo xattr -cr tank-war.app
 
-zip -r TankWar-macOS.zip tank-war.app
+zip -r tank-war-macos.zip tank-war.app
 
 rm -rf tank-war.app
