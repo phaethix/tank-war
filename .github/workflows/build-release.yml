@@ -14,7 +14,7 @@ jobs:
     strategy:
       matrix:
         os: [windows-latest, ubuntu-latest]
-      fail-fast: false  # 确保所有平台都尝试构建
+      fail-fast: true
 
     steps:
       - name: Checkout Code
@@ -31,13 +31,13 @@ jobs:
         run: mvn clean package -DskipTests
 
       # -------------------------------------------------------------
-      # 💻 针对 Windows 打包 (绿色免安装 zip)
+      # 💻 针对 Windows 打包
       # -------------------------------------------------------------
       - name: jpackage for Windows
         if: matrix.os == 'windows-latest'
         run: |
           jpackage `
-            --name "TankWar" `
+            --name "tank-war" `
             --input target `
             --main-jar tank-war-1.0-SNAPSHOT.jar `
             --main-class org.tinygame.tankwar.Main `
@@ -45,16 +45,16 @@ jobs:
             --java-options "--enable-preview" `
             --dest dist
 
-          Compress-Archive -Path dist/TankWar -DestinationPath dist/TankWar-Windows.zip
+          Compress-Archive -Path dist/tank-war -DestinationPath dist/tank-war-windows.zip
 
       # -------------------------------------------------------------
-      # 🐧 针对 Linux 打包 (绿色免安装 tar.gz)
+      # 🐧 针对 Linux 打包
       # -------------------------------------------------------------
       - name: jpackage for Linux
         if: matrix.os == 'ubuntu-latest'
         run: |
           jpackage \
-            --name "TankWar" \
+            --name "tank-war" \
             --input target \
             --main-jar tank-war-1.0-SNAPSHOT.jar \
             --main-class org.tinygame.tankwar.Main \
@@ -63,7 +63,7 @@ jobs:
             --dest dist
           
           cd dist
-          tar -czvf TankWar-Linux.tar.gz TankWar
+          tar -czvf tank-war-linux.tar.gz tank-war
 
       # -------------------------------------------------------------
       # 📤 上传生成的构建产物 (Artifacts)
@@ -72,19 +72,18 @@ jobs:
         if: matrix.os == 'windows-latest'
         uses: actions/upload-artifact@v4
         with:
-          name: TankWar-Windows
-          path: dist/TankWar-Windows.zip
+          name: tank-war-windows
+          path: dist/tank-war-windows.zip
           retention-days: 7
 
       - name: Upload Linux Artifact
         if: matrix.os == 'ubuntu-latest'
         uses: actions/upload-artifact@v4
         with:
-          name: TankWar-Linux
-          path: dist/TankWar-Linux.tar.gz
+          name: tank-war-linux
+          path: dist/tank-war-linux.tar.gz
           retention-days: 7
 
-  # 如果是通过 Git Tag (例如 v1.0.0) 触发的，自动发布到 Releases
   release:
     name: Create GitHub Release
     needs: build
@@ -101,7 +100,7 @@ jobs:
       - name: Create Release and Upload Assets
         uses: softprops/action-gh-release@v2
         with:
-          name: "🎮 Tank War ${{ github.ref_name }}"
+          name: "🎮 tank-war ${{ github.ref_name }}"
           body: |
             🚀 **This is our first official release!**
 
@@ -116,5 +115,5 @@ jobs:
             ---
             Download the archive for your platform, extract it, and enjoy! 🎮
           files: |
-            artifacts/TankWar-Windows/TankWar-Windows.zip
-            artifacts/TankWar-Linux/TankWar-Linux.tar.gz
+            artifacts/tank-war-windows/tank-war-windows.zip
+            artifacts/tank-war-linux/tank-war-linux.tar.gz
