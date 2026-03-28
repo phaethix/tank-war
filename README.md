@@ -97,6 +97,57 @@ flowchart TB
 | `Q` | Toggle background music |
 | `R` | Restart the current match |
 
+## ▶️ How to Run
+
+### Windows
+
+- Download `TankWar-Windows.zip` from GitHub Releases.
+- Extract the archive.
+- Open the extracted `TankWar` folder and run the application executable inside it.
+
+### Linux
+
+- Download `TankWar-Linux.tar.gz` from GitHub Releases.
+- Extract the archive:
+
+```bash
+tar -xzvf TankWar-Linux.tar.gz
+```
+
+- Enter the extracted directory and run the launcher:
+
+```bash
+cd TankWar && ./bin/TankWar
+```
+
+### MacOS
+
+- Build or download `tank-war.app`.
+- If macOS blocks the app with a security warning, run the following command in Terminal and then try opening the app again:
+
+```bash
+sudo xattr -dr com.apple.quarantine tank-war.app
+```
+
+What this does:
+
+- It removes the `com.apple.quarantine` attribute that macOS adds to files downloaded from the internet.
+- It only affects the specified `tank-war.app` bundle on your own Mac.
+
+Is it safe:
+
+- For the app downloaded from this project, this step is expected and safe to use.
+- This project is a personal learning game and is not signed or notarized with an Apple Developer account, so macOS may block it on some Macs until the quarantine attribute is removed.
+
+### Run from source
+
+If you prefer to run the game directly from source on any platform, make sure you have JDK 25 and Maven 3.9+ installed:
+
+```bash
+mvn clean package
+java --enable-preview -jar target/tank-war-1.0-SNAPSHOT.jar
+```
+
 ## 📄 License
 
 This project is licensed under the [MIT License](LICENSE).
