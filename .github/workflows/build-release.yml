@@ -13,7 +13,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [macos-latest, windows-latest, ubuntu-latest]
+        os: [windows-latest, ubuntu-latest]
       fail-fast: false  # 确保所有平台都尝试构建
 
     steps:
@@ -29,62 +29,6 @@ jobs:
 
       - name: Build with Maven
         run: mvn clean package -DskipTests
-
-      # -------------------------------------------------------------
-      # 🍎 针对 macOS 打包 (绿色免安装 zip) - 完全重写版
-      # -------------------------------------------------------------
-      - name: jpackage for macOS
-        if: matrix.os == 'macos-latest'
-        run: |
-          export JAVA_HOME=$(/usr/libexec/java_home -v 25)
-          
-          echo "📦 Running jpackage for macOS..."
-          mkdir -p dist
-          cd dist
-          
-          jpackage \
-            --name "TankWar" \
-            --input ../target \
-            --main-jar tank-war-1.0-SNAPSHOT.jar \
-            --main-class org.tinygame.tankwar.Main \
-            --type app-image \
-            --java-options "--enable-preview" \
-            --dest . || {
-              echo "❌ jpackage failed!"
-              exit 1
-            }
-          
-          echo "🔍 Generated files:"
-          ls -la
-          
-          # 查找实际生成的 .app 文件
-          APP_FILE=$(find . -name "*.app" -type d | head -n 1)
-          if [ -z "$APP_FILE" ]; then
-            echo "❌ No .app file found!"
-            exit 1
-          fi
-          
-          echo "✅ Found app at: $APP_FILE"
-          
-          echo "🔒 Signing app (free signing)..."
-          /usr/bin/codesign --force --deep --sign - "$APP_FILE" || {
-            echo "⚠️ codesign warning (expected)"
-          }
-          
-          echo "🧹 Removing quarantine attributes..."
-          /bin/xattr -cr "$APP_FILE" || {
-            echo "⚠️ xattr warning"
-          }
-          
-          echo "📦 Creating ZIP archive..."
-          cd ..
-          zip -r TankWar-macOS.zip dist/TankWar.app || {
-            echo "❌ zip failed!"
-            exit 1
-          }
-          
-          echo "✅ macOS build completed!"
-          ls -la TankWar-macOS.zip
 
       # -------------------------------------------------------------
       # 💻 针对 Windows 打包 (绿色免安装 zip)
@@ -124,14 +68,6 @@ jobs:
       # -------------------------------------------------------------
       # 📤 上传生成的构建产物 (Artifacts)
       # -------------------------------------------------------------
-      - name: Upload macOS Artifact
-        if: matrix.os == 'macos-latest'
-        uses: actions/upload-artifact@v4
-        with:
-          name: TankWar-macOS
-          path: TankWar-macOS.zip
-          retention-days: 7
-
       - name: Upload Windows Artifact
         if: matrix.os == 'windows-latest'
         uses: actions/upload-artifact@v4
@@ -178,21 +114,7 @@ jobs:
             - **Complete Audio System**: Immersive background music and synchronized sound effects for movement, firing, and explosions.
 
             ---
-            ### ⚠️ **IMPORTANT FOR MAC USERS**
-            Due to macOS security restrictions (Gatekeeper), you might see an error saying **"TankWar is damaged and can't be opened"** upon first download. This is normal for apps not signed by a paid Apple Developer account.
-            
-            **How to fix this:**
-            1. **Right-click** (or Control+Click) on the `TankWar.app` file inside the ZIP.
-            2. Select **"Open"**.
-            3. In the popup dialog, click **"Open"** again.
-            
-            *Alternative Method:*
-            Go to **System Settings > Privacy & Security**, scroll down to the bottom, and click **"Open Anyway"** next to the blocked message.
-            
-            Once opened once, you can double-click to launch normally in the future. 🍎
-
             Download the archive for your platform, extract it, and enjoy! 🎮
           files: |
-            artifacts/TankWar-macOS/TankWar-macOS.zip
             artifacts/TankWar-Windows/TankWar-Windows.zip
             artifacts/TankWar-Linux/TankWar-Linux.tar.gz
