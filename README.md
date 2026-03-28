@@ -101,23 +101,23 @@ flowchart TB
 
 ### Windows
 
-- Download `TankWar-Windows.zip` from GitHub Releases.
+- Download `tank-war-windows.zip` from GitHub Releases.
 - Extract the archive.
-- Open the extracted `TankWar` folder and run the application executable inside it.
+- Open the extracted `tank-war` folder and run the application executable inside it.
 
 ### Linux
 
-- Download `TankWar-Linux.tar.gz` from GitHub Releases.
+- Download `tank-war-linux.tar.gz` from GitHub Releases.
 - Extract the archive:
 
 ```bash
-tar -xzvf TankWar-Linux.tar.gz
+tar -xzvf tank-war-linux.tar.gz
 ```
 
 - Enter the extracted directory and run the launcher:
 
 ```bash
-cd TankWar && ./bin/TankWar
+cd tank-war && ./bin/tank-war
 ```
 
 ### MacOS
