@@ -12,7 +12,9 @@
 
 - Defeat all enemy tanks to win the match.
 - Getting destroyed ends the current round immediately.
+- Player bullet firing is rate-limited, with the cooldown configurable in `game.properties`.
 - A pause overlay is shown when the game is paused, and a result overlay is shown after victory or defeat.
+- Background music starts automatically and keeps looping for the whole game session.
 - Press `P` to pause or resume the current match.
 - Press `R` to restart at any time, whether the round is still in progress or already over.
 
@@ -94,7 +96,6 @@ flowchart TB
 | `↑` `↓` `←` `→` | Move tank |
 | `Space` | Fire bullet |
 | `P` | Pause or resume the current match |
-| `Q` | Toggle background music |
 | `R` | Restart the current match |
 
 ## ▶️ How to Run
@@ -143,8 +144,27 @@ Is it safe:
 
 If you prefer to run the game directly from source on any platform, make sure you have JDK 25 and Maven 3.9+ installed:
 
+macOS / Linux:
+
 ```bash
-mvn clean package
+./scripts/run.sh
+```
+
+Windows:
+
+```bat
+scripts\run.bat
+```
+
+What these scripts do:
+
+- Builds the latest jar with `mvn clean package`.
+- Starts the game with preview features enabled.
+- Runs `target/tank-war-1.0-SNAPSHOT.jar` for you directly.
+
+If you want to run the jar manually, the underlying command is:
+
+```bash
 java --enable-preview -jar target/tank-war-1.0-SNAPSHOT.jar
 ```
 
