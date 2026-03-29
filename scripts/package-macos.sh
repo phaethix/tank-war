@@ -1,5 +1,5 @@
 #!/bin/zsh
-mvn clean package
+cd .. && mvn clean package
 
 jpackage \
   --name tank-war \
