@@ -46,13 +46,13 @@ public class TankFrame extends Frame {
         this.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                // 窗口关闭时停止背景音乐，释放音频资源
-                Audio.stopBgm();
+                Audio.shutdown();
                 System.exit(0);
             }
         });
 
         this.addKeyListener(keyListener);
+        Audio.startBackgroundMusic();
         resetGame();
     }
 
@@ -68,10 +68,6 @@ public class TankFrame extends Frame {
                 }
                 case KeyEvent.VK_R -> {
                     resetGame();
-                    return;
-                }
-                case KeyEvent.VK_Q -> {
-                    Audio.toggleBgm();
                     return;
                 }
             }
@@ -91,7 +87,7 @@ public class TankFrame extends Frame {
 
         @Override
         public void keyReleased(KeyEvent e) {
-            if (e.getKeyCode() == KeyEvent.VK_P || e.getKeyCode() == KeyEvent.VK_R || e.getKeyCode() == KeyEvent.VK_Q)
+            if (e.getKeyCode() == KeyEvent.VK_P || e.getKeyCode() == KeyEvent.VK_R)
                 return;
 
             if (gameState != GameState.PLAYING)
@@ -203,14 +199,12 @@ public class TankFrame extends Frame {
         if (tank.isInactive()) {
             gameState = GameState.DEFEAT;
             tank.setMoving(false);
-            Audio.stopBgm();
             return;
         }
 
         if (tanks.isEmpty()) {
             gameState = GameState.VICTORY;
             tank.setMoving(false);
-            Audio.stopBgm();
         }
     }
 

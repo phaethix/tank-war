@@ -11,7 +11,7 @@ import java.util.Properties;
 public final class GameConfig {
     public record Window(String title, int width, int height) {}
     public record GameLoop(int frameIntervalMs) {}
-    public record PlayerTank(int initX, int initY, int speed) {}
+    public record PlayerTank(int initX, int initY, int speed, int fireIntervalMs) {}
     public record EnemyTank(int count, int startX, int spacingX, int startY, int spawnMaxY, int speed, int fireThreshold, int turnThreshold) {}
     public record Bullet(int speed) {}
     public record Boundary(int margin, int topOffset) {}
@@ -33,6 +33,23 @@ public final class GameConfig {
     public final Audio audio = bind(Audio.class);
 
     private GameConfig() {
+    }
+
+    public int playerFireIntervalMs() {
+        int configured = Math.max(1, playerTank.fireIntervalMs());
+        int enemyEquivalent = enemyFireIntervalMs();
+        if (enemyEquivalent == Integer.MAX_VALUE) {
+            return configured;
+        }
+        return Math.min(configured, enemyEquivalent);
+    }
+
+    public int enemyFireIntervalMs() {
+        int fireChancePerHundredFrames = Math.max(0, Math.min(100, 99 - enemyTank.fireThreshold()));
+        if (fireChancePerHundredFrames == 0) {
+            return Integer.MAX_VALUE;
+        }
+        return Math.max(1, gameLoop.frameIntervalMs() * 100 / fireChancePerHundredFrames);
     }
 
     private static <T extends Record> T bind(Class<T> type) {

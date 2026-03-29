@@ -107,6 +107,7 @@ jobs:
             ### ✨ Key Features in ${{ github.ref_name }}:
             - **Smooth Combat**: 20 FPS game loop powered by Java virtual threads for responsive movement and shooting.
             - **Intelligent Enemy AI**: Randomized movement, dynamic direction changes, and autonomous firing behavior.
+            - **Balanced Fire Rate**: Player firing cooldown is configurable and will never be slower than the enemy firing rate.
             - **Full Match Flow**: Built-in victory, defeat, and pause overlays for a clearer gameplay experience.
             - **Instant Replay**: Press `R` at any time to restart the match without relaunching the game.
             - **Pause and Resume**: Press `P` to freeze the battlefield and continue whenever you are ready.

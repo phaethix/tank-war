@@ -11,13 +11,13 @@ import org.tinygame.tankwar.util.ResourceManager;
 
 import java.awt.*;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 坦克类
  */
 @Getter
 public class Tank {
-
     public static final int WIDTH = ResourceManager.tankD.getWidth();
     public static final int HEIGHT = ResourceManager.tankD.getHeight();
 
@@ -27,11 +27,15 @@ public class Tank {
     private final Rectangle rect = new Rectangle();
     private int speed;
 
+    private static final long PLAYER_FIRE_INTERVAL_NANOS =
+            TimeUnit.MILLISECONDS.toNanos(GameConfig.CFG.playerFireIntervalMs());
+
     private int x, y;
     private int prevX, prevY;
     @Setter private Dir dir;
     @Setter private boolean moving;
     private boolean inactive;
+    private long lastFireAtNanos;
 
     public Tank(int x, int y, Dir dir, Group group, TankFrame frame) {
         this.x = x;
@@ -131,12 +135,22 @@ public class Tank {
     }
 
     public void fire() {
+        if (group == Group.GOOD && !canPlayerFireNow()) {
+            return;
+        }
+
         int bx = this.x + Tank.WIDTH / 2 - Bullet.WIDTH / 2;
         int by = this.y + Tank.HEIGHT / 2 - Bullet.HEIGHT / 2;
         frame.bullets.add(new Bullet(bx, by, dir, group, frame));
         if (group == Group.GOOD) {
+            lastFireAtNanos = System.nanoTime();
             Audio.play(Audio.TANK_FIRE);
         }
+    }
+
+    private boolean canPlayerFireNow() {
+        long now = System.nanoTime();
+        return lastFireAtNanos == 0L || now - lastFireAtNanos >= PLAYER_FIRE_INTERVAL_NANOS;
     }
 
     public void destroy() {
